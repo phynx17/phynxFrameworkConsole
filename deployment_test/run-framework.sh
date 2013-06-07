@@ -1,0 +1,1 @@
+java -classpath phynx.fconsole-1.0.0.jar:org.eclipse.osgi_3.4.2.R34x_v20080826-1230.jar -Dosgi.consoleClass=org.phynx.osgi.PhynxFrameworkConsole -Dosgi.debug=debug.properties -Dbundles.configuration.location=configuration -Dorg.ops4j.pax.logging.DefaultServiceLog.level=DEBUG org.phynx.osgi.core.runtime.PhynxEclipseStarter -console 35517

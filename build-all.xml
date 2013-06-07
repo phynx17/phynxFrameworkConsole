@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="make-jar-all" name="phynx.fconsole">
+    <property environment="env"/>
+	<property file="build-no-maven.properties"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.4"/>
+    <property name="source" value="1.4"/>
+    
+    <!-- ==============================
+    				SOURCES
+    	=============================== -->
+    
+    <!-- Core -->
+    <property name="core.java.src" value="src/main/java"/>
+	<property name="core.java.resouces" value="src/main/resources"/>
+    <property name="core.java.build" value="target"/>        
+    
+	<property name="jar.core.name" value="dist/${project.name}-${project.version}.jar"/>
+    
+	
+    <path id="Plug-in Dependencies.libraryclasspath">
+        <pathelement location="lib/org.eclipse.osgi_3.4.2.R34x_v20080826-1230.jar"/>   
+    </path>
+    <path id="default.classpath">
+        <path refid="Plug-in Dependencies.libraryclasspath"/>
+        <!-- 
+    	<pathelement location="lib/main/pax-logging-api-1.4.jar"/>
+    	<pathelement location="lib/main/oracle.jdbc.driver.12-10g2.jar"/>
+    	-->
+    	<pathelement location="${core.java.build}"/> 	
+    </path>
+    
+    
+    <target name="init-core">
+        <mkdir dir="${core.java.build}"/>
+        <copy 
+        	includeemptydirs="false" 
+        	todir="${core.java.build}">
+            <fileset dir="${core.java.src}" 
+            	excludes="**/*.uad, **/*.ucd, **/*.uld, **/*.upd, **/*.udd, **/*.uod, **/*.usd, **/*.utd, **/*.uud, **/*.odd, **/*.ead, **/*.ecd, **/*.eld, **/*.epd, **/*.edd, **/*.eod, **/*.esd, **/*.etd, **/*.eud, **/*.urd*.uml, **/*.ecore, **/*.launch, **/*.java"/>
+        </copy>
+    </target>
+    
+    <target name="clean-core">
+        <delete dir="${core.java.build}"/>
+    </target>
+    
+    <!--
+    <target depends="clean-core, clean-osgi, clean-osgi-dbconn" name="cleanall"/>
+    -->
+    
+    <!-- Build -->
+	   
+	<target depends="clean-core,init-core" name="build-core">
+		<echo message="${ant.project.name}: ${ant.file}"/>
+	 	<javac debug="true" 
+	 		debuglevel="${debuglevel}" 
+	 		destdir="${core.java.build}" 
+	 		source="${target}">
+	     	<src path="${core.java.src}"/>
+	 		<classpath refid="default.classpath"/>
+	 	</javac>
+	</target>
+
+	<!--
+	<target depends="build-core, build-osgi" name="buildall"/>
+    -->
+    
+    <!-- End Build -->
+            
+        
+	<target name="make-jar-core" depends="clean-core,build-core">
+		<delete file="./${jar.core.name}" />
+		<echo message="${core.java.resouces}/jdbc.properties"></echo>
+		<!-- 
+		<jar destfile="./${jar.core.name}" 
+				manifest="${core.java.resouces}/META-INF/MANIFEST.MF"
+				compress="true">
+			<fileset dir="${core.java.build}">
+				<exclude name="${core.java.src.root}/**"/>
+				<exclude name="**/${jar.core.name}"/>
+				<exclude name="**/*.log*"/>				
+				<exclude name="**/*eclipse*.jar"/>				
+				<exclude name="**/bnd*.jar"/>
+				<exclude name="build*.*"/>
+				<exclude name="pom.xml"/>
+			</fileset>			
+		</jar>
+		-->
+		<jar destfile="./${jar.core.name}" 
+				compress="true">
+			<fileset dir="${core.java.build}">
+				<exclude name="${core.java.src.root}/**"/>
+				<exclude name="**/${jar.core.name}"/>
+				<exclude name="**/*.log*"/>				
+				<exclude name="**/*eclipse*.jar"/>				
+				<exclude name="**/bnd*.jar"/>
+				<exclude name="build*.*"/>
+				<exclude name="pom.xml"/>
+			</fileset>			
+		</jar>		
+		
+		<copy file="./${jar.core.name}" 
+				todir="dep_test" />
+	</target>
+	
+
+	<target name="make-jar-all" depends="make-jar-core" />
+
+</project>
